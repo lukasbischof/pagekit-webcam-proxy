@@ -1,0 +1,14 @@
+{
+    "name": "lukas/webcam",
+    "type": "pagekit-extension",
+    "version": "1.0.0",
+    "title": "WebCam",
+    "description": "A webcam.",
+    "authors": [
+        {
+            "name": "Lukas Bischof",
+            "email": "lukasbischof@solnet.ch",
+            "homepage": "http://bohlhof.de"
+        }
+    ]
+}
