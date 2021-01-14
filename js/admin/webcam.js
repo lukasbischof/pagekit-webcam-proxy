@@ -1,4 +1,15 @@
 $(function () {
+    Vue.component('webcam-row', {
+        template: '#webcam-row†',
+        data: function () {
+            return {
+                url: window.$data.access.url,
+                user: window.$data.access.user,
+                password: window.$data.access.password
+            };
+        },
+    })
+
     var vm = new Vue({
         el: '#webcam',
         data: {
