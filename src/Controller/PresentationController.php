@@ -5,13 +5,32 @@ namespace Pagekit\Webcam\Controller;
 use Pagekit\Application as App;
 
 class PresentationController {
-  public function indexAction() {
+  /**
+   * @param int $id Image id
+   */
+  public function indexAction($id = null) {
+    $id = intval($id);
     $config = App::module('webcam')->config;
+
+    $webcam = current(array_filter($config['webcams'], function ($element) use ($id) {
+      return $element['id'] == intval($id);
+    }));
+
+    if ($webcam == false) {
+      http_response_code(404);
+      die('Not found');
+    }
+
     list($process, $result) = $this->fetch_image(
-      $config['access']['url'],
-      $config['access']['user'],
-      $config['access']['password']
+      $webcam['url'],
+      $webcam['user'],
+      $webcam['password']
     );
+
+    if ($result == false) {
+      http_response_code(500);
+      die('Could not fetch image');
+    }
 
     $len = curl_getinfo($process, CURLINFO_SIZE_DOWNLOAD);
     $content_type = curl_getinfo($process, CURLINFO_CONTENT_TYPE);
@@ -23,9 +42,9 @@ class PresentationController {
   }
 
   /**
-   * @param $url
-   * @param $user
-   * @param $password
+   * @param string $url The URL
+   * @param string $user The HTTP basic auth user
+   * @param string $password The HTTP basic auth password
    * @return array
    */
   public function fetch_image($url, $user, $password) {

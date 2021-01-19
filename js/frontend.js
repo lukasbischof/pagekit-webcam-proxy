@@ -1,38 +1,59 @@
-window.addEventListener("load", function () {
-    if (window.XMLHttpRequest && window.Blob && window.URL && window.URL.createObjectURL) {
-        var progress = document.getElementById("progress");
+function errorHandler($container, progress) {
+  return function () {
+    $container.append('<p>Webcam konnte nicht geladen werden</p>');
+    progress.remove();
+  };
+}
 
-        Image.prototype.load = function (url) {
-            var thisImg = this;
-            var xmlHTTP = new XMLHttpRequest();
+function fetchImage($container) {
+  var imageId = $container.data('webcam-id');
+  var url = '/webcam/image/' + imageId;
 
-            xmlHTTP.open('GET', url, true);
-            xmlHTTP.responseType = 'arraybuffer';
+  if (window.XMLHttpRequest && window.Blob && window.URL && window.URL.createObjectURL) {
+    var $progress = $container.children('progress');
 
-            xmlHTTP.onload = function (e) {
-                var blob = new Blob([this.response]);
-                thisImg.src = window.URL.createObjectURL(blob);
+    Image.prototype.load = function (url) {
+      var thisImg = this;
+      var xmlHTTP = new XMLHttpRequest();
 
-                document.getElementById("webcamContent").appendChild(thisImg);
-                document.getElementById("webcamContent").removeChild(progress);
-            };
+      xmlHTTP.open('GET', url, true);
+      xmlHTTP.responseType = 'arraybuffer';
 
-            xmlHTTP.onprogress = function (e) {
-                progress.value = e.loaded / e.total;
-            };
+      xmlHTTP.onload = function (e) {
+        if (this.status === 200) {
+          var blob = new Blob([this.response]);
+          thisImg.src = window.URL.createObjectURL(blob);
 
-            xmlHTTP.send();
-        };
+          $container.append(thisImg);
+          $progress.remove();
+        } else {
+          errorHandler($container, $progress)();
+        }
+      };
 
-        var img = new Image();
-        img.load("/index.php/webcam/image");
-    } else {
-        document.getElementById("webcamContent").removeChild(document.getElementById("progress"));
+      xmlHTTP.onerror = errorHandler($container, $progress);
 
-        var img = new Image();
-        img.src = "/index.php/webcam/image";
-        img.alt = "Webcam";
+      xmlHTTP.onprogress = function (e) {
+        $progress.value = e.loaded / e.total;
+      };
 
-        document.getElementById("webcamContent").appendChild(img);
-    }
+      xmlHTTP.send();
+    };
+
+    new Image().load(url);
+  } else {
+    document.getElementById('webcamContent').removeChild(document.getElementById('progress'));
+
+    var img = new Image();
+    img.src = url;
+    img.alt = 'Webcam';
+
+    document.getElementById('webcamContent').appendChild(img);
+  }
+}
+
+window.addEventListener('load', function () {
+  $('[data-webcam-id]').each(function (idx, container) {
+    fetchImage($(container));
+  });
 });

@@ -1,2 +1,7 @@
-<p id="status">loading…</p>
-<img src="/index.php/webcam/image" onload="document.getElementById('status').style.display = 'none';" />
+<?php
+$config = $app->module('webcam')->config;
+?>
+
+<?php foreach ($config['webcams'] as $webcam): ?>
+<img src="/index.php/webcam/image/<?php echo $webcam['id'] ?>" />
+<?php endforeach; ?>

@@ -25,10 +25,6 @@ return [
     ],
   ],
 
-  'main' => function (App $app) {
-    //echo 'WEbcam';
-  },
-
   'autoload' => [
     'Pagekit\\Webcam\\' => 'src'
   ],
@@ -45,16 +41,15 @@ return [
     ],
 
     '@webcam/image' => [
-      'path' => '/webcam/image',
-      'controller' => 'Pagekit\\Webcam\\Controller\\PresentationController'
+      'path' => '/webcam/image/{id}',
+      'controller' => 'Pagekit\\Webcam\\Controller\\PresentationController',
+      'methods' => 'GET',
+      'requirements' => [
+        'id' => '\d+'
+      ]
     ]
   ],
   'config' => [
-    'access' => [
-      'url' => '',
-      'user' => '',
-      'password' => ''
-    ],
     'webcams' => [],
   ],
   'permissions' => [

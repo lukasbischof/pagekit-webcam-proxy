@@ -8,32 +8,34 @@ $view->script('webcam', 'webcam:js/admin/webcam.js', 'vue');
 <script type="text/x-template" id="webcam-row">
     <div>
         <div class="uk-form-row">
-            <span class="uk-form-label">{{ 'URL' | trans }}</span>
+            <span class="uk-form-label">URL</span>
             <div class="uk-form-controls uk-form-controls-text">
                 <p class="uk-form-controls-condensed">
-                    <input v-model="url"/>
+                    <input v-model="webcam.url"/>
                 </p>
             </div>
         </div>
 
         <div class="uk-form-row">
-            <span class="uk-form-label">{{ 'Benutzername' | trans }}</span>
+            <span class="uk-form-label">Benutzername</span>
             <div class="uk-form-controls uk-form-controls-text">
                 <p class="uk-form-controls-condensed">
-                    <input v-model="user"/>
+                    <input v-model="webcam.user"/>
                 </p>
             </div>
         </div>
 
         <div class="uk-form-row">
-            <span class="uk-form-label">{{ 'Passwort' | trans }}</span>
+            <span class="uk-form-label">Passwort</span>
             <div class="uk-form-controls uk-form-controls-text">
                 <p class="uk-form-controls-condensed">
-                    <input v-model="password" type="password"/>
+                    <input v-model="webcam.password" type="password"/>
                 </p>
             </div>
         </div>
+        <button class="uk-button uk-button-danger" @click="$emit('remove-webcam', webcam.id)">Webcam entfernen</button>
     </div>
+    <hr class="uk-divider-icon uk-margin"/>
 </script>
 
 <div id="webcam" class="uk-form uk-form-horizontal" v-cloak>
@@ -46,6 +48,9 @@ $view->script('webcam', 'webcam:js/admin/webcam.js', 'vue');
         </div>
     </div>
 
-    <webcam-row/>
-    <hr/>
+    <div v-for="webcam in webcams" :key="webcam.id">
+        <webcam-row v-bind:webcam="webcam" v-on:remove-webcam="onRemoveWebcam" />
+    </div>
+
+    <button class="uk-button uk-button-secondary" @click="addWebcam">+ Webcam hinzufügen</button>
 </div>
